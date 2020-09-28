@@ -69,13 +69,6 @@ functions:
          - Arn
     - Effect: "Allow"        
       Action:
-        - dynamodb:Scan        
-      Resource:
-        Fn::GetAtt:
-        - TodoDynamoDBTable
-        - Arn
-    - Effect: "Allow"        
-      Action:
         - dynamodb:Query        
       Resource:
         !Join 

@@ -12,13 +12,11 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   const authorization = event.headers.Authorization
   const split = authorization.split(' ')
   const jwtToken = split[1]
-  //console.log('Caller event', event)
-  //console.log('Token: '+ jwtToken)
+  //console.log('Caller event', even
   
 
 
 try{  
-  
   const result = await getAllToDo(jwtToken)
   
   return {
