@@ -9,25 +9,25 @@ enum UploadState {
   UploadingFile,
 }
 
-interface EditTodoProps {
+interface EditPointProps {
   match: {
     params: {
-      todoId: string
+      pointId: string
     }
   }
   auth: Auth
 }
 
-interface EditTodoState {
+interface EditPointState {
   file: any
   uploadState: UploadState
 }
 
-export class EditTodo extends React.PureComponent<
-  EditTodoProps,
-  EditTodoState
+export class EditPoint extends React.PureComponent<
+  EditPointProps,
+  EditPointState
 > {
-  state: EditTodoState = {
+  state: EditPointState = {
     file: undefined,
     uploadState: UploadState.NoUpload
   }
@@ -51,7 +51,7 @@ export class EditTodo extends React.PureComponent<
       }
 
       this.setUploadState(UploadState.FetchingPresignedUrl)
-      const uploadUrl = await getUploadUrl(this.props.auth.getIdToken(), this.props.match.params.todoId)
+      const uploadUrl = await getUploadUrl(this.props.auth.getIdToken(), this.props.match.params.pointId)
 
       this.setUploadState(UploadState.UploadingFile)
       await uploadFile(uploadUrl, this.state.file)

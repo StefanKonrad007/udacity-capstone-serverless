@@ -3,10 +3,10 @@ import { Link, Route, Router, Switch } from 'react-router-dom'
 import { Grid, Menu, Segment } from 'semantic-ui-react'
 
 import Auth from './auth/Auth'
-import { EditTodo } from './components/EditTodo'
+import { EditPoint } from './components/EditPoint'
 import { LogIn } from './components/LogIn'
 import { NotFound } from './components/NotFound'
-import { Todos } from './components/Todos'
+import { BucketPoints } from './components/BucketPoints'
 
 export interface AppProps {}
 
@@ -92,15 +92,15 @@ export default class App extends Component<AppProps, AppState> {
           path="/"
           exact
           render={props => {
-            return <Todos {...props} auth={this.props.auth} />
+            return <BucketPoints {...props} auth={this.props.auth} />
           }}
         />
 
         <Route
-          path="/todos/:todoId/edit"
+          path="/bucketPoint/:pointId/edit" //hab ich geändert war vorher todos und todoId
           exact
           render={props => {
-            return <EditTodo {...props} auth={this.props.auth} />
+            return <EditPoint {...props} auth={this.props.auth} />
           }}
         />
 
