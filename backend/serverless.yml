@@ -1,5 +1,5 @@
 service:
-  name: serverless-todo-app
+  name: serverless-BucketList-app
 
 plugins:
   - serverless-webpack
@@ -15,9 +15,9 @@ provider:
   region: ${opt:region, 'eu-central-1'}
 
   environment:
-    TODO_TABLE: Todos-${self:provider.stage}
+    BUCKET_TABLE: BucketPoints-${self:provider.stage}
     USER_ID_INDEX: 'userId-Index'
-    IMAGES_S3_BUCKET: serverless-udagram-images-datacapm2333-${self:provider.stage}
+    IMAGES_S3_BUCKET: serverless-udagram-images-datacapm233-capstone-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
     AWSREGION: ${self:provider.region}
   
@@ -27,12 +27,12 @@ custom:
     api:
       info:
         version: v1.0.0
-        title: Todo API
-        description: Serverless Todo application 
+        title: Bucket_List API
+        description: Serverless Bucket_List application 
     models:
-      - name: createTodoRequest
+      - name: createBucketPointRequest
         contentType: application/json
-        schema: ${file(./src/models/create-todo-request.json)}
+        schema: ${file(./src/models/create-BucketPoint-request.json)}
 
   # enable AWS X-Ray Tracing
   tracing:
@@ -51,21 +51,21 @@ functions:
     handler: src/lambda/auth/auth0Authorizer.handler
 
   # done: Configure this function
-  GetTodos:
-    handler: src/lambda/http/getTodos.handler
+  GetBucketList:
+    handler: src/lambda/http/getBucketList.handler
     events:
       - http:
           method: get
-          path: todos
+          path: bucketPoint
           cors: true
-    iamRoleStatementsName: iam-getTodo-role
+    iamRoleStatementsName: iam-getBucketList-role
     iamRoleStatements:
     - Effect: "Allow"        
       Action:
         - dynamodb:GetItem        
       Resource:
         Fn::GetAtt:
-         - TodoDynamoDBTable
+         - BucketDynamoDBTable
          - Arn
     - Effect: "Allow"        
       Action:
@@ -73,7 +73,7 @@ functions:
       Resource:
         !Join 
         - ''
-        - - !GetAtt TodoDynamoDBTable.Arn 
+        - - !GetAtt BucketDynamoDBTable.Arn 
           - '/*'
     - Effect: "Allow"
       Action:
@@ -87,64 +87,64 @@ functions:
     
 
 
-  CreateTodo:
-    handler: src/lambda/http/createTodo.handler
+  CreateBucketPoint:
+    handler: src/lambda/http/createBucketPoint.handler
     events:
       - http:
           method: post
-          path: todos
+          path: bucketPoint
           cors: true
           authorizer: Auth
           reqValidatorName: RequestBodyValidator
           documentation:
-            summary: Create a new Todo
+            summary: Create a new BucketPoint
             requestModels:
-              'application/json': createTodoRequest
-    iamRoleStatementsName: iam-createTodo-role
+              'application/json': createBucketPointRequest
+    iamRoleStatementsName: iam-createBucketPoint-role
     iamRoleStatements:
       - Effect: "Allow"        
         Action:
           - dynamodb:PutItem        
         Resource:
           Fn::GetAtt:
-            - TodoDynamoDBTable
+            - BucketDynamoDBTable
             - Arn
 
 
   # TRY: Configure this function
-  UpdateTodo:
-    handler: src/lambda/http/updateTodo.handler
+  UpdateBucketPoint:
+    handler: src/lambda/http/updateBucketPoint.handler
     events:
       - http:
           method: patch
-          path: todos/{todoId}
+          path: bucketPoint/{pointId}
           cors: true
-    iamRoleStatementsName: iam-updateTodo-role
+    iamRoleStatementsName: iam-updateBucketUPoint-role
     iamRoleStatements:
       - Effect: "Allow"        
         Action:
           - dynamodb:UpdateItem        
         Resource:
           Fn::GetAtt:
-            - TodoDynamoDBTable
+            - BucketDynamoDBTable
             - Arn
 
     #TRY: Configure this function
-  DeleteTodo:
-    handler: src/lambda/http/deleteTodo.handler
+  DeleteBucketPoint:
+    handler: src/lambda/http/deleteBucketPoint.handler
     events:
       - http:
           method: delete
-          path: todos/{todoId}
+          path: bucketPoint/{pointId}
           cors: true
-    iamRoleStatementsName: iam-deleteTodo-role
+    iamRoleStatementsName: iam-deleteBucketPoint-role
     iamRoleStatements:
       - Effect: "Allow"        
         Action:
         - dynamodb:DeleteItem      
         Resource:
           Fn::GetAtt:
-            - TodoDynamoDBTable
+            - BucketDynamoDBTable
             - Arn
 
     # TRY: Configure this function
@@ -153,17 +153,17 @@ functions:
     events:
       - http:
           method: post
-          path: todos/{todoId}/attachment
+          path: bucketPoint/{pointId}/attachment
           cors: true
           authorizer: Auth
-    iamRoleStatementsName: iam-genUploadUTodo-role
+    iamRoleStatementsName: iam-genUploadBucketpoint-role
     iamRoleStatements:
       - Effect: "Allow"        
         Action:
           - dynamodb:UpdateItem        
         Resource:
           Fn::GetAtt:
-            - TodoDynamoDBTable
+            - BucketDynamoDBTable
             - Arn
       - Effect: "Allow"
         Action:
@@ -205,21 +205,21 @@ resources:
           Ref: ApiGatewayRestApi
 
 
-    TodoDynamoDBTable:
+    BucketDynamoDBTable:
       Type: AWS::DynamoDB::Table
       Properties:
         AttributeDefinitions:
-          - AttributeName: todoId
+          - AttributeName: pointId
             AttributeType: S
           - AttributeName: userId
             AttributeType: S
         KeySchema:
-          - AttributeName: todoId
+          - AttributeName: pointId
             KeyType: HASH
           - AttributeName: userId
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
-        TableName: ${self:provider.environment.TODO_TABLE}
+        TableName: ${self:provider.environment.BUCKET_TABLE}
         GlobalSecondaryIndexes:
           - IndexName: ${self:provider.environment.USER_ID_INDEX}
             KeySchema:

@@ -1,5 +1,5 @@
 import 'source-map-support/register'
-import { getAllToDo } from '../../businessLogic/todo'
+import { getBucketList } from '../../businessLogic/bucketPoint'
 
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
 import { createLogger } from '../../utils/logger'
@@ -14,10 +14,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   const jwtToken = split[1]
   //console.log('Caller event', even
   
-
-
 try{  
-  const result = await getAllToDo(jwtToken)
+  const result = await getBucketList(jwtToken)
   
   return {
       statusCode: 200,

@@ -1,9 +1,14 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "todo",
+  "title": "BucketPoint",
   "type": "object",
   "properties": {
     "name": {
+      "type": "string",
+      "minLength": 4,
+      "pattern": "[a-zA-Z0-9]"
+    },
+    "category": {
       "type": "string",
       "minLength": 4,
       "pattern": "[a-zA-Z0-9]"
@@ -17,6 +22,7 @@
   },
   "required": [
     "name",
+    "category",
     "dueDate"
   ],
   "additionalProperties": false

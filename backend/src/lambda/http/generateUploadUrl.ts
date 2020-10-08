@@ -3,7 +3,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } f
 import * as AWS from 'aws-sdk'
 import * as AWSXRay from 'aws-xray-sdk'
 import { createLogger } from '../../utils/logger'
-import { updateTodoAttachment } from '../../businessLogic/todo'
+import { updateBucketPointAttachment } from '../../businessLogic/bucketPoint'
 //import { UpdateTodoAttachmentUrlRequest } from "../../requests/UpdateTodoAttachmentUrlRequest"
 
 const  XAWS = AWSXRay.captureAWS(AWS)
@@ -19,8 +19,8 @@ const urlExpiration = process.env.SIGNED_URL_EXPIRATION
 
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  const todoId = event.pathParameters.todoId
-  const imageId = 'img-'+todoId
+  const pointId = event.pathParameters.pointId
+  const imageId = 'img-'+pointId
   //const imageUrl = `https://${bucketName}.s3.${region}.amazonaws.com/${imageId}`
   const signedUrl = getUploadUrl(imageId)
  
@@ -30,7 +30,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
 
   try {
     
-    await updateTodoAttachment(todoId , {attachmentUrl: imageId}, jwtToken)
+    await updateBucketPointAttachment(pointId , {attachmentUrl: imageId}, jwtToken)
 
   } catch(e) {
     logger.error("UpdateAttachment error", {Meta: e})
@@ -41,7 +41,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
         'Access-Control-Allow-Credentials': true //removed comment
       },
       body: JSON.stringify({
-        todoId,
+        pointId,
         uploadUrl: signedUrl
       })
     }
@@ -56,7 +56,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
       'Access-Control-Allow-Credentials': true
     },
     body: JSON.stringify({
-      todoId,
+      pointId,
       uploadUrl: signedUrl,
     })
   }

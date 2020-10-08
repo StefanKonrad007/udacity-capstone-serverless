@@ -2,24 +2,24 @@ import 'source-map-support/register'
 
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
 
-import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
-import { createToDo } from '../../businessLogic/todo'
+import { CreateBucketPointRequest } from '../../requests/CreateBucketPointRequest'
+import { createBucketPoint } from '../../businessLogic/bucketPoint'
 import { createLogger } from '../../utils/logger'
 
-const logger = createLogger('createTodo')
+const logger = createLogger('createBucketPoint')
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   
-  const newTodo: CreateTodoRequest = JSON.parse(event.body)
+  const newBucketPoint: CreateBucketPointRequest = JSON.parse(event.body)
   // TODO: Implement creating a new TODO item
   const authorization = event.headers.Authorization
   const split = authorization.split(' ')
   const jwtToken = split[1]
-  console.log('hello create todo')
+  console.log('hello create Buckepoint')
 
 
 try{
-  const newItem = await createToDo(newTodo, jwtToken)
+  const newItem = await createBucketPoint(newBucketPoint, jwtToken)
   return {
     statusCode: 201,
     headers: {
@@ -32,9 +32,9 @@ try{
   }
 
 }catch(error){
-  logger.error('createToDo failed', {
+  logger.error('createBucketPoint failed', {
     Data: {
-      newTodo,
+      newBucketPoint,
       jwtToken,
       error
     }

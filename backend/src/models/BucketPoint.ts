@@ -1,8 +1,9 @@
-export interface TodoItem {
+export interface BucketPoint {
   userId: string
-  todoId: string
+  pointId: string
   createdAt: string
   name: string
+  category: string
   dueDate: string
   done: boolean
   attachmentUrl?: string

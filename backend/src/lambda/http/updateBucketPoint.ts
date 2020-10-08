@@ -2,20 +2,20 @@ import 'source-map-support/register'
 
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
 
-import { UpdateTodoRequest } from '../../requests/UpdateTodoRequest'
-import { updateTodo } from '../../businessLogic/todo'
+import { UpdateBucketPointRequest } from '../../requests/UpdateBucketPointRequest'
+import { updateBucketPoint } from '../../businessLogic/bucketPoint'
 import { createLogger } from '../../utils/logger'
 
 const logger = createLogger('updateTodo')
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  const todoId = event.pathParameters.todoId
-  const updatedTodo: UpdateTodoRequest = JSON.parse(event.body)
+  const pointId = event.pathParameters.pointId
+  const updatedBucketPoint: UpdateBucketPointRequest = JSON.parse(event.body)
   const token = event.headers.Authorization.split(' ')[1]
-  console.log(todoId+updatedTodo)
+  console.log(pointId+updatedBucketPoint)
 
 try{
-  await updateTodo(updatedTodo, token, todoId)
+  await updateBucketPoint(updatedBucketPoint, token, pointId)
 
   return {
     statusCode: 201,
@@ -30,9 +30,9 @@ try{
   // TODO: Update a TODO item with the provided id using values in the "updatedTodo" object
   logger.error('updateToDo failed', {
     Data: {
-      updatedTodo,
+      updatedBucketPoint,
       token,
-      todoId
+      pointId
     }
   })
   return {

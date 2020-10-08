@@ -4,62 +4,62 @@ import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 
 const XAWS = AWSXRay.captureAWS(AWS)
 
-import { TodoItem } from '../models/TodoItem'
+import { BucketPoint } from '../models/BucketPoint'
 //import { join } from 'path'
 import { UpdateAttachmentRequest } from '../requests/UpdateAttachmentRequest'
-import { TodoUpdate } from '../models/TodoUpdate'
+import { BucketPointUpdate } from '../models/BucketPointUpdate'
 import { createLogger } from '../utils/logger'
 
 const logger = createLogger('DataLayer')
 
 
-export class ToDoAccess {
+export class BucketPointAccess {
 
   constructor(
     private readonly docClient: DocumentClient =  new XAWS.DynamoDB.DocumentClient(),
-    private readonly todoTable = process.env.TODO_TABLE,
+    private readonly bucketTable = process.env.BUCKET_TABLE,
     private readonly userIdIndex = process.env.USER_ID_INDEX
 ) {
   }
 
-  async getAllToDo(userid:string): Promise<TodoItem[]> {
-    console.log('Getting all ToDos')
+  async getBucketList(userid:string): Promise<BucketPoint[]> {
+    console.log('Getting all BucketPoints')
 
 
     const result = await this.docClient.query({
-      TableName: this.todoTable,
+      TableName: this.bucketTable,
       IndexName: this.userIdIndex,
       KeyConditionExpression: 'userId= :userId',
       ExpressionAttributeValues: {':userId':userid}
     }).promise()
 
     const items = result.Items
-    return items as TodoItem[]
+    return items as BucketPoint[]
   }
 
 
-  async createToDo(todo: TodoItem): Promise<TodoItem> {
+  async createBucketPoint(bucketPoint: BucketPoint): Promise<BucketPoint> {
     await this.docClient.put({
-      TableName: this.todoTable,
-      Item: todo
+      TableName: this.bucketTable,
+      Item: bucketPoint
     }).promise()
 
-    return todo
+    return bucketPoint
   }
 
-  async deleteToDo(todoId: String, userId: String){
+  async deleteBucketPoint(pointId: String, userId: String){
     await this.docClient.delete({
-      TableName: this.todoTable,
+      TableName: this.bucketTable,
       Key:{userId: userId,
-      todoId: todoId}
+      pointId: pointId}
     }).promise()
   }
 
-  async updateItemAttachment(todoId: String, userId: String, attachment: UpdateAttachmentRequest){
+  async updateItemAttachment(pointId: String, userId: String, attachment: UpdateAttachmentRequest){
     await this.docClient.update({
-      TableName: this.todoTable,
+      TableName: this.bucketTable,
       Key:{userId: userId,
-      todoId: todoId},
+      pointId: pointId},
       UpdateExpression: "SET attachmentUrl = :attachment", 
       ExpressionAttributeValues: {
         ":attachment": attachment.attachmentUrl
@@ -67,23 +67,24 @@ export class ToDoAccess {
     }).promise()
   }
 
-  async updateToDo(todoId: String, userId: String, ToDoUpdate: TodoUpdate ){
+  async updatebucketPoint(pointId: String, userId: String, BucketPointUpdate: BucketPointUpdate ){
     logger.info('updateToDo', {
       Data: {
-        todoId,
+        pointId,
         userId,
-        ToDoUpdate
+        BucketPointUpdate
       }
     })
     await this.docClient.update({
-      TableName: this.todoTable,
+      TableName: this.bucketTable,
       Key:{userId: userId,
-      todoId: todoId},
+      pointId: pointId},
       UpdateExpression: "SET #title = :name, dueDate = :dueDate, done = :done", 
       ExpressionAttributeValues: {
-        ":name": ToDoUpdate.name,
-        ":dueDate": ToDoUpdate.dueDate,
-        ":done": ToDoUpdate.done
+        ":name": BucketPointUpdate.name,
+        "category": BucketPointUpdate.category,
+        ":dueDate": BucketPointUpdate.dueDate,
+        ":done": BucketPointUpdate.done
       },
       ExpressionAttributeNames: {
         "#title": "name"

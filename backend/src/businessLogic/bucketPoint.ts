@@ -1,20 +1,20 @@
 import * as uuid from 'uuid'
 
-import { TodoItem } from '../models/TodoItem'
-import { ToDoAccess } from '../dataLayer/todoAccess'
-import { CreateTodoRequest } from '../requests/CreateTodoRequest'
+import { BucketPoint } from '../models/BucketPoint'
+import { BucketPointAccess } from '../dataLayer/bucketAccess'
+import { CreateBucketPointRequest } from '../requests/CreateBucketPointRequest'
 import { parseUserId } from '../auth/utils'
 import { UpdateAttachmentRequest} from '../requests/UpdateAttachmentRequest'
 import * as AWS  from 'aws-sdk'
 import * as AWSXRay from 'aws-xray-sdk'
 import { createLogger } from '../utils/logger'
-import { TodoUpdate } from '../models/TodoUpdate'
+import { BucketPointUpdate } from '../models/BucketPointUpdate'
 
 const logger = createLogger('todo_businessLogic')
 
 
 
-const todoAccess = new ToDoAccess()
+const bucketAccess = new BucketPointAccess()
 const bucketName = process.env.IMAGES_S3_BUCKET
 const urlExpiration = process.env.SIGNED_URL_EXPIRATION
 const XAWS = AWSXRay.captureAWS(AWS)
@@ -22,11 +22,11 @@ const s3 = new XAWS.S3({signatureVersion: "v4"})
 
 
 
-export async function getAllToDo(jwtToken): Promise<TodoItem[]> {
+export async function getBucketList(jwtToken): Promise<BucketPoint[]> {
   // const userId = parseUserId(jwtToken)
   // return todoAccess.getAllToDo(userId)
 
-  let items = await todoAccess.getAllToDo(parseUserId(jwtToken))
+  let items = await bucketAccess.getBucketList(parseUserId(jwtToken))
   for (let item of items) {
      
       if(item['attachmentUrl']) {
@@ -36,44 +36,45 @@ export async function getAllToDo(jwtToken): Promise<TodoItem[]> {
   return items
 }
 
-export async function createToDo(
-  createToDoRequest: CreateTodoRequest,
+export async function createBucketPoint(
+  createBucketPointRequest: CreateBucketPointRequest,
   jwtToken: string
-): Promise<TodoItem> {
+): Promise<BucketPoint> {
 
   const itemId = uuid.v4()
   const userId = parseUserId(jwtToken)
   
-  return await todoAccess.createToDo({
+  return await bucketAccess.createBucketPoint({
     userId: userId,
-    todoId: itemId,
+    pointId: itemId,
     createdAt: new Date().toISOString(),
-    name: createToDoRequest.name,
-    dueDate: createToDoRequest.dueDate,
+    name: createBucketPointRequest.name,
+    category: createBucketPointRequest.category,
+    dueDate: createBucketPointRequest.dueDate,
     done: false,
   })
 }
-export async function deleteToDo(todoId, jwtToken){
-  //console.log('todo businesslogic ...todoid ist : ' + todoId + '- userid ist: ' + jwtToken)
-  logger.info('deleteToDo', {
+export async function deleteBucketPoint(pointId, jwtToken){
+  //console.log('todo businesslogic ...pointId ist : ' + pointId + '- userid ist: ' + jwtToken)
+  logger.info('deleteBucketPoint', {
     Data: {
-      todoId,
+      pointId,
       jwtToken
     }
   })
   
   const userId = parseUserId(jwtToken)
-  return todoAccess.deleteToDo(todoId, userId)
+  return bucketAccess.deleteBucketPoint(pointId, userId)
   
 }
 
-export async function updateTodoAttachment(
+export async function updateBucketPointAttachment(
   itemId:string,
   updatedItem: UpdateAttachmentRequest,
   jwt:string) {
       const userId = parseUserId(jwt)
 
-      return await todoAccess.updateItemAttachment(itemId, userId, updatedItem) 
+      return await bucketAccess.updateItemAttachment(itemId, userId, updatedItem) 
 
 }
 
@@ -86,14 +87,14 @@ export function signedUrl (attachment:string) {
   })
 }
 
-export async function updateTodo(TodoUpdate: TodoUpdate, jwtToken, todoId ){
+export async function updateBucketPoint(BucketListUpdate: BucketPointUpdate, jwtToken, pointId ){
   const userId = parseUserId(jwtToken)
-  await todoAccess.updateToDo(todoId, userId, TodoUpdate)
+  await bucketAccess.updatebucketPoint(pointId, userId, BucketListUpdate)
   logger.info('updateToDoBusniessLogic', {
     Data: {
-      todoId,
+      pointId,
       jwtToken,
-      TodoUpdate
+      BucketListUpdate
     }
   })
 }
