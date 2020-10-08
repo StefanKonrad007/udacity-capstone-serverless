@@ -6,7 +6,7 @@ import { UpdateBucketPointRequest } from '../../requests/UpdateBucketPointReques
 import { updateBucketPoint } from '../../businessLogic/bucketPoint'
 import { createLogger } from '../../utils/logger'
 
-const logger = createLogger('updateTodo')
+const logger = createLogger('updateBucketPoint')
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const pointId = event.pathParameters.pointId
@@ -28,7 +28,7 @@ try{
 
 }catch(error){
   // TODO: Update a TODO item with the provided id using values in the "updatedTodo" object
-  logger.error('updateToDo failed', {
+  logger.error('updateBucketPoint failed', {
     Data: {
       updatedBucketPoint,
       token,

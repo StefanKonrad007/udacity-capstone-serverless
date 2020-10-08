@@ -68,7 +68,7 @@ export class BucketPointAccess {
   }
 
   async updatebucketPoint(pointId: String, userId: String, BucketPointUpdate: BucketPointUpdate ){
-    logger.info('updateToDo', {
+    logger.info('updateBucketPoint', {
       Data: {
         pointId,
         userId,

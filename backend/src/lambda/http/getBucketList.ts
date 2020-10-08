@@ -4,7 +4,7 @@ import { getBucketList } from '../../businessLogic/bucketPoint'
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
 import { createLogger } from '../../utils/logger'
 
-const logger = createLogger('getTodos')
+const logger = createLogger('getBucketList')
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   // TODO: Get all TODO items for a current user
@@ -26,7 +26,7 @@ try{
       body: JSON.stringify({'items': result})
     }
   }catch(error){
-    logger.error('getAllTodoFail', {
+    logger.error('getAllBucketPointsFail', {
       Data: {
         error
       }

@@ -8,7 +8,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   const pointId = event.pathParameters.pointId
   const token = event.headers.Authorization.split(' ')[1]
   // TODO: Remove a TODO item by id
-  const logger = createLogger('deleteTodo')
+  const logger = createLogger('deleteBucketPoint')
 
 try{
   await deleteBucketPoint(pointId, token)
