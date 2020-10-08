@@ -82,7 +82,6 @@ export class BucketPointAccess {
       UpdateExpression: "SET #title = :name, dueDate = :dueDate, done = :done", 
       ExpressionAttributeValues: {
         ":name": BucketPointUpdate.name,
-        "category": BucketPointUpdate.category,
         ":dueDate": BucketPointUpdate.dueDate,
         ":done": BucketPointUpdate.done
       },

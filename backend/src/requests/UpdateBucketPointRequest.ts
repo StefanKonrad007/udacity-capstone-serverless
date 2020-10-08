@@ -3,7 +3,6 @@
  */
 export interface UpdateBucketPointRequest {
   name: string
-  category: string
   dueDate: string
   done: boolean
 }
